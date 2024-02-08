@@ -39,6 +39,8 @@ webApp.MapPost("/orders", (FoodOrderRequest fo, FoodDelivery fd) =>
     return Results.Created("/orders/" + id, fo);
 });
 
+webApp.MapGet("/dishes", async (AppDbContext db) => await db.Dishes.ToListAsync());
+
 webApp.MapPost("/dishes", (Dish dish, AppDbContext db) =>
 {
     db.Add(dish);
