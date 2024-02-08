@@ -61,8 +61,11 @@ webApp.MapGet("/dishes", async (AppDbContext db) => await db.Dishes.ToListAsync(
 webApp.MapPost("/dishes", (Dish dish, AppDbContext db, HttpContext ctx) =>
 {
     if (ctx.Request.Headers["secretpasskey"] != "pingvin") return Results.Unauthorized();
+    if (dish.Name == "Noname" || dish.Price > 5) return Results.BadRequest("Äh skärp dig.");
+
     db.Add(dish);
     db.SaveChanges();
+
     return Results.Created("/", dish);
 });
 
