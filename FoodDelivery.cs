@@ -47,6 +47,7 @@ public class FoodOrder
     public int Id { get; set; }
     public DateTime OrderDate { get; set; }
     public DateTime DeliveryDate { get; set; }
+    public int DishId { get; set; }
     public Dish? Dish { get; set; }
     public float Price { get; set; }
     public DeliveryStatus DeliveryStatus { get; set; } = DeliveryStatus.Ordered;

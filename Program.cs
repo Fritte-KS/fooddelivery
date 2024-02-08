@@ -1,10 +1,15 @@
 /*
+    Dag 1
+    * ASP.Net
+    * Minimal API
+    * Routing
+    * DI Container
 
+    Dag 2
     * Entity Framework
     * Asynkront kod i aspnet
     * Använda vårt api till något (Consume an API)
     * Inlämningsuppgift WebAPI
-
 */
 
 using Microsoft.EntityFrameworkCore;
@@ -53,10 +58,12 @@ webApp.MapPost("/orders", (FoodOrderRequest fo, FoodDelivery fd) =>
 
 webApp.MapGet("/dishes", async (AppDbContext db) => await db.Dishes.ToListAsync()).RequireCors("AllowAll");
 
-webApp.MapPost("/dishes", (Dish dish, AppDbContext db) =>
+webApp.MapPost("/dishes", (Dish dish, AppDbContext db, HttpContext ctx) =>
 {
+    if (ctx.Request.Headers["secretpasskey"] != "pingvin") return Results.Unauthorized();
     db.Add(dish);
     db.SaveChanges();
+    return Results.Created("/", dish);
 });
 
 //Här startar vår server och börjar lyssna på inkommande HTTP-requests

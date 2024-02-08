@@ -24,3 +24,7 @@ Content-Type: application/json
 }
 
 ###
+
+GET http://178.62.217.177/dishes HTTP/1.1
+
+###

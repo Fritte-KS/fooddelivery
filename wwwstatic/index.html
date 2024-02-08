@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dish Order System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .dish {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Order Your Dish</h1>
+    <div id="dishes"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dishesContainer = document.getElementById('dishes');
+
+            // Function to fetch dishes and display them
+            function fetchDishes() {
+                fetch('http://178.62.217.177/dishes')
+                .then(response => response.json())
+                .then(data => {
+                    dishesContainer.innerHTML = ''; // Clear existing dishes
+                    data.forEach(dish => {
+                        const dishElement = document.createElement('div');
+                        dishElement.classList.add('dish');
+                        dishElement.innerHTML = `
+                            <span>${dish.name} - $${dish.price}</span>
+                            <button onclick="orderDish(${dish.id})">Order</button>
+                        `;
+                        dishesContainer.appendChild(dishElement);
+                    });
+                })
+                .catch(error => console.error('Error fetching dishes:', error));
+            }
+
+            // Function to order a dish
+            window.orderDish = function(dishId) {
+                fetch('http://178.62.217.177/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ DishId: dishId }),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Order placed successfully!');
+                        fetchDishes(); // Refresh the dishes list
+                    } else {
+                        alert('Failed to place order. Please try again.');
+                    }
+                })
+                .catch(error => console.error('Error ordering dish:', error));
+            }
+
+            // Initial fetch of dishes
+            fetchDishes();
+        });
+    </script>
+</body>
+</html>
