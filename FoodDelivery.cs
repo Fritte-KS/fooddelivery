@@ -63,6 +63,7 @@ public enum DeliveryStatus
 {
     Ordered,
     BeingPrepared,
+    ReadyForDelivery,
     OutForDelivery,
     Delivered,
     Cancelled

@@ -18,8 +18,20 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlite("Data Source=database.db"));
 builder.Services.AddScoped<FoodDelivery>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 //Här skapas WebApplikationobjektet med de services som lagts till ovan
 WebApplication webApp = builder.Build();
+
+webApp.UseCors("AllowAll");
 
 //Nu kan vi konfigurera våra olika 'routes' med MapGet, MapPost osv.
 webApp.MapGet("/", () => "Welcome to our restaurant!");
