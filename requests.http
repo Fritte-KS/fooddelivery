@@ -10,6 +10,21 @@ POST http://localhost:5262/orders HTTP/1.1
 Content-Type: application/json
 
 {
-  "Title": "LOTR",
-  "Author": "J.R.R. Tolkien"
+  "DishId": 1
 }
+
+###
+
+GET http://178.62.217.177/orders HTTP/1.1
+
+###
+
+POST http://localhost:5262/dishes HTTP/1.1
+Content-Type: application/json
+
+{
+  "Name": "Pasta Deluxe",
+  "Price": 500
+}
+
+###
