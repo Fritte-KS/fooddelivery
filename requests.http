@@ -38,3 +38,14 @@ secretpasskey: pingvin
   "Name": "Pasta Deluxe",
   "Price": 500
 }
+
+###
+
+POST http://localhost:5262/dishes HTTP/1.1
+Content-Type: application/json
+secretpasskey: pingvin
+
+{
+  "Name": "",
+  "Price": 0
+}

@@ -16,6 +16,7 @@
     * Controllers och Actions
 */
 
+using System.IO.Compression;
 using Microsoft.EntityFrameworkCore;
 
 //Skapa först objektet WebApplicationBuilder som har till uppgift
@@ -60,12 +61,12 @@ webApp.MapPost("/orders", (FoodOrderRequest fo, FoodDelivery fd) =>
     return Results.Created("/orders/" + id, fo);
 });
 
-webApp.MapGet("/dishes", async (AppDbContext db) => await db.Dishes.ToListAsync()).RequireCors("AllowAll");
+webApp.MapGet("/dishes", async (AppDbContext db) => await db.Dishes.Where(d => d.Name != "Noname").ToListAsync()).RequireCors("AllowAll");
 
 webApp.MapPost("/dishes", (Dish dish, AppDbContext db, HttpContext ctx) =>
 {
     if (ctx.Request.Headers["secretpasskey"] != "pingvin") return Results.Unauthorized();
-    if (dish.Name == "Noname" || dish.Price > 5) return Results.BadRequest("Äh skärp dig.");
+    if (dish.Name == "Noname" || dish.Price < 5) return Results.BadRequest("Äh skärp dig.");
 
     db.Add(dish);
     db.SaveChanges();
