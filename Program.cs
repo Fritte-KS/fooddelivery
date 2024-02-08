@@ -6,10 +6,14 @@
     * DI Container
 
     Dag 2
-    * Entity Framework
-    * Asynkront kod i aspnet
-    * Använda vårt api till något (Consume an API)
+    * Entity Framework (Lägg till dbcontext till samtliga metoder i OrderDelivery)
+    * Asynkront kod i aspnet (Gör samtliga endpoints asynkrona)
+    * Använda vårt api till något (Consume an API) (Skriv ett admingränssnitt)
+    * (Gör en hemsida som kan hantera beställningar)
     * Inlämningsuppgift WebAPI
+
+    Dag 3
+    * Controllers och Actions
 */
 
 using Microsoft.EntityFrameworkCore;
