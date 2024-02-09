@@ -4,6 +4,7 @@
     * Minimal API
     * Routing
     * DI Container
+    * Model Binding
 
     Dag 2
     * Entity Framework (Lägg till dbcontext till samtliga metoder i OrderDelivery)
@@ -16,7 +17,6 @@
     * Controllers och Actions
 */
 
-using System.IO.Compression;
 using Microsoft.EntityFrameworkCore;
 
 //Skapa först objektet WebApplicationBuilder som har till uppgift
@@ -38,13 +38,19 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 //Här skapas WebApplikationobjektet med de services som lagts till ovan
 WebApplication webApp = builder.Build();
+
+webApp.UseSwagger();
+webApp.UseSwaggerUI();
 
 webApp.UseCors("AllowAll");
 
 //Nu kan vi konfigurera våra olika 'routes' med MapGet, MapPost osv.
-webApp.MapGet("/", () => "Welcome to our restaurant!");
+
 webApp.MapGet("/orders", async (FoodDelivery fd) => await fd.GetAllOrdersAsync());
 
 webApp.MapGet("/orders/{id}", async (int id, FoodDelivery fd) => await fd.GetOrderByIdAsync(id));
@@ -66,6 +72,7 @@ webApp.MapGet("/dishes", async (AppDbContext db) => await db.Dishes.Where(d => d
 webApp.MapPost("/dishes", (Dish dish, AppDbContext db, HttpContext ctx) =>
 {
     if (ctx.Request.Headers["secretpasskey"] != "pingvin") return Results.Unauthorized();
+
     if (dish.Name == "Noname" || dish.Price < 5) return Results.BadRequest("Äh skärp dig.");
 
     db.Add(dish);
@@ -73,6 +80,7 @@ webApp.MapPost("/dishes", (Dish dish, AppDbContext db, HttpContext ctx) =>
 
     return Results.Created("/", dish);
 });
+webApp.UseStaticFiles();
 
 //Här startar vår server och börjar lyssna på inkommande HTTP-requests
 webApp.Run();
