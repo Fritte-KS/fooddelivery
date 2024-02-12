@@ -17,6 +17,7 @@
     * Controllers och Actions
 */
 
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 //Skapa först objektet WebApplicationBuilder som har till uppgift
@@ -27,6 +28,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 //Innan Build() körs läggs olika services till DI-containern
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlite("Data Source=database.db"));
 builder.Services.AddScoped<FoodDelivery>();
+builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
 {
@@ -52,9 +54,7 @@ webApp.UseCors("AllowAll");
 //Nu kan vi konfigurera våra olika 'routes' med MapGet, MapPost osv.
 
 webApp.MapGet("/orders", async (FoodDelivery fd) => await fd.GetAllOrdersAsync());
-
-webApp.MapGet("/orders/{id}", async (int id, FoodDelivery fd) => await fd.GetOrderByIdAsync(id));
-
+webApp.MapGet("/orders/{id:int}", async (int id, FoodDelivery fd) => await fd.GetOrderByIdAsync(id));
 webApp.MapPost("/orders", (FoodOrderRequest fo, FoodDelivery fd) =>
 {
     int id = fd.OrderFood(fo);
@@ -68,7 +68,6 @@ webApp.MapPost("/orders", (FoodOrderRequest fo, FoodDelivery fd) =>
 });
 
 webApp.MapGet("/dishes", async (AppDbContext db) => await db.Dishes.Where(d => d.Name != "Noname").ToListAsync()).RequireCors("AllowAll");
-
 webApp.MapPost("/dishes", (Dish dish, AppDbContext db, HttpContext ctx) =>
 {
     if (ctx.Request.Headers["secretpasskey"] != "pingvin") return Results.Unauthorized();
@@ -80,7 +79,12 @@ webApp.MapPost("/dishes", (Dish dish, AppDbContext db, HttpContext ctx) =>
 
     return Results.Created("/", dish);
 });
-webApp.UseStaticFiles();
+
+webApp.MapControllers();
+
+webApp.UseStaticFiles();  //   /index.html
+
+webApp.Lifetime.ApplicationStarted.Register(() => Console.WriteLine("HEYA!"));
 
 //Här startar vår server och börjar lyssna på inkommande HTTP-requests
 webApp.Run();
